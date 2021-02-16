@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartarch.user.mapper.OperSetMapper">
+    <resultMap id="OperSetMap" type="com.smartarch.user.entity.OperSet">
+        <id column="id" property="id" />
+        <result property="opersetName" column="opersetname" />
+        <result property="description" column="description" />
+    </resultMap>
+    
+
+    <select id="getById" resultMap="OperSetMap">
+        select * from opersets where id = #{id} 
+    </select>
+    
+    <select id="getByOpersetName" resultMap="OperSetMap">
+        select * from opersets where opersetname = #{opersetname} 
+    </select>
+
+    <insert id="insertOperSet">
+        insert into opersets values(#{id}, #{opersetname}, #{description})
+    </insert>
+    
+    <insert id="deleteOperSet">
+        delete from opersets where id = #{id}
+    </insert>
+    
+    <insert id="updateOperSet">
+        update opersets set description = #{description}
+    </insert>
+    
+</mapper>

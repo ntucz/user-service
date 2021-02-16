@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartarch.user.mapper.UserMapper">
+    <resultMap id="UserMap" type="com.smartarch.user.entity.User">
+        <id column="id" property="id" />
+        <result property="userName" column="username" />
+        <result property="passwords" column="passwords" />
+        <result property="tenantId" column="tenantid" />
+        <result property="email" column="email" />
+        <result property="fullName" column="fullname" />
+        <result property="telephone" column="telephone" />
+        <result property="description" column="description" />
+        <result property="createTime" column="createtime" />
+        <result property="modifyTime" column="modifytime" />
+        <result property="creator" column="creator" />
+        <collection property="roles" ofType="com.smartarch.user.entity.Role" column="id" javaType="ArrayList" >
+            <id property="id" column="role_id"></id>
+            <result property="roleName" column="rolename"></result>
+            <result property="description" column="role_desc"></result>
+        </collection>
+    </resultMap>
+    
+    <resultMap id="UserRoleMap" type="com.smartarch.user.entity.IdsRelation">
+      <id column="userid" property="id" />
+      <id column="roleid" property="_id" />
+    </resultMap>
+    
+    <select id="getById" resultMap="UserMap">
+        select _user.*, _role.id as role_id, _role.rolename, _role.description as role_desc
+        from users _user, userrole _rel, roles _role 
+        where _rel.roleid = _role.id and _rel.userid = #{id} and _user.id = #{id} 
+    </select>
+    
+    <select id="getRolesById" resultMap="UserRoleMap">
+        select * from userrole where userid = #{id}
+    </select>
+    
+    <select id="getByUsername" resultMap="UserMap">
+        select * from users where username = #{username} 
+    </select>
+    
+    <select id="getByName" resultMap="UserMap">
+        select _user.*, _role.id, _role.rolename, _role.description 
+        from users _user, userrole _rel, roles _role 
+        where _rel.roleid = _role.id and _rel.userid = #{id} and _user.username = #{username} 
+    </select>
+
+    <insert id="insertUser">
+        insert into users values(#{id}, #{username}, #{passwords}, #{tenantid}, #{email}, #{fullname}, #{telephone}, #{description}, #{createtime}, #{modifytime}, #{creator})
+    </insert>
+    
+    <insert id="updateUser">
+        update users set passwords = #{passwords}, tenantid = #{tenantid}, email = #{email}, fullname = #{fullname}, 
+        telephone = #{telephone}, description = #{description}, modifytime = #{modifytime}
+    </insert>
+    
+    <insert id="deleteUser">
+        delete from users where id = #{id}
+    </insert>
+    
+    <insert id="deleteUserRoleById">
+        delete from userrole where userid = #{userid}
+    </insert>
+    
+    <insert id="deleteUserRole">
+        delete from userrole where userid = #{userid} and roleid = #{roleid}
+    </insert>
+    
+    <insert id="insertUserRole">
+        insert into userrole values(#{userid}, #{roleid})
+    </insert>
+</mapper>

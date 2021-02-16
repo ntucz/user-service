@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartarch.user.mapper.RoleMapper">
+    <resultMap id="RoleMap" type="com.smartarch.user.entity.Role">
+        <id property="id" column="id"></id>
+        <result property="roleName" column="rolename"></result>
+        <result property="description" column="description"></result>
+        <collection property="opersets" ofType="com.smartarch.user.entity.OperSet" column="id" javaType="ArrayList" >
+            <id property="id" column="operset_id"></id>
+            <result property="opersetName" column="opersetname"></result>
+            <result property="description" column="operset_desc"></result>
+        </collection>
+    </resultMap>
+    
+    <resultMap id="RoleOpersetMap" type="com.smartarch.user.entity.IdsRelation">
+      <id column="roleid" property="id" />
+      <id column="opersetid" property="_id" />
+    </resultMap>
+
+    <select id="getById" resultMap="RoleMap">
+        select _role.*, _operset.id as operset_id, _operset.opersetname, _operset.description as operset_desc
+        from roles _role, roleoperset _rel, opersets _operset 
+        where _rel.opersetid = _operset.id and _rel.roleid = #{id} and _role.id = #{id} 
+    </select>
+    
+    <select id="getOpersetsById" resultMap="RoleOpersetMap">
+        select * from roleoperset where roleid = #{id}
+    </select>
+    
+    <select id="getByRoleName" resultMap="RoleMap">
+        select * from roles where rolename = #{rolename} 
+    </select>
+
+    <insert id="insertRole">
+        insert into roles values(#{id}, #{rolename}, #{description})
+    </insert>
+    
+    <insert id="updateRole">
+        update roles set description = #{description}
+    </insert>
+    
+    <insert id="deleteRole">
+        delete from roles where id = #{id}
+    </insert>
+    
+    <insert id="deleteRoleOpersetById">
+        delete from roleoperset where roleid = #{roleid}
+    </insert>
+    
+    <insert id="deleteRoleOperset">
+        delete from roleoperset where roleid = #{roleid} and opersetid = #{opersetid}
+    </insert>
+    
+    <insert id="insertRoleOperset">
+        insert into roleoperset values(#{roleid}, #{opersetid})
+    </insert>
+    
+</mapper>
